@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка на грант | Траектории Роста</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение D3.js для визуализации бюджета -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Define Dark Mode Palette */
+        :root {
+            --color-mipt: #3b82f6; /* Electric Blue */
+            --color-gazprom: #10b981; /* Emerald Green */
+            --bg-dark: #0F172A; /* Slate 900 */
+            --card-dark: #1E293B; /* Slate 800 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #E2E8F0; /* Slate 200 */
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #1E293B 0%, #1e3a8a 100%);
+            border-bottom: 4px solid var(--color-mipt);
+        }
+        .text-mipt { color: var(--color-mipt); }
+
+        /* Custom styles for D3 Chart */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+        }
+        .arc path {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        .legend-item:hover {
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
+        }
+        details[open] .details-arrow {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto bg-slate-900 shadow-2xl rounded-2xl overflow-hidden border border-slate-700/50">
+
+        <!-- HEADER SECTION -->
+        <header class="header-bg text-slate-100 p-6 md:p-10 shadow-xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="space-y-2">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-blue-400">Грантовая Заявка</p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Траектории Роста</h1>
+                    <h2 class="text-lg md:text-xl font-light text-slate-400">Развитие потенциала молодежи через социально-технологические проекты</h2>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <p class="font-bold text-lg text-slate-300">Запрашиваемая сумма:</p>
+                    <p class="text-4xl font-extrabold text-teal-400">2 000 000 ₽</p>
+                </div>
+            </div>
+            <div class="mt-6 border-t border-slate-700 pt-4 text-sm font-medium flex flex-wrap gap-x-6 gap-y-2 text-slate-300">
+                <p>Заявитель: <span class="text-blue-400 font-bold">МФТИ</span></p>
+                <p>Партнер: <span class="text-teal-400 font-bold">Газпром нефть Ямал</span></p>
+                <p>Срок: Январь – Декабрь 2026</p>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-10 space-y-12">
+
+            <!-- 1. ЦЕЛИ И ЗАДАЧИ -->
+            <section class="p-6 bg-[--card-dark] rounded-xl shadow-lg border-l-4 border-blue-500">
+                <h3 class="text-2xl font-bold text-blue-400 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-blue-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    1. Цели и задачи проекта
+                </h3>
+                <p class="text-lg font-semibold text-slate-300 mb-4 border-b border-slate-700 pb-3">
+                    **Цель:** развитие потенциала молодежи Тюменской области через обучение созданию социально-технологических проектов.
+                </p>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-slate-400">
+                    <li>Дать участникам практические знания и инструменты для создания социальных инициатив с использованием технологий.</li>
+                    <li>Развить у молодежи навыки, позволяющие дистанционно зарабатывать на социально-технологическом предпринимательстве.</li>
+                    <li>Сформировать сообщество активных молодых людей, ориентированных на созидательные изменения.</li>
+                </ul>
+            </section>
+
+            <!-- 2. ЦЕЛЕВАЯ АУДИТОРИЯ -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-red-400"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    2. Целевая аудитория
+                </h3>
+                <div class="p-6 bg-[--card-dark] border-l-4 border-red-500 rounded-xl shadow-lg">
+                    <p class="text-slate-300">
+                        Молодежь **15–22 лет** из г. **Тюмени**, с. **Мыс Каменный**, с. **Новый Порт** (учащиеся школ, студенты, молодые специалисты).
+                    </p>
+                    <p class="mt-3 font-medium text-slate-400">
+                        **Актуальность:** Ограниченный доступ к современным образовательным практикам и возможностям заработка в цифровой экономике.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 5. ОЖИДАЕМЫЕ РЕЗУЛЬТАТЫ (ВИЗУАЛИЗАЦИЯ МЕТРИК) -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-purple-400"><path d="M3 3v18h18"/><path d="M18 17l-4.5-4.5L9 17l-3.5-3.5L3 17"/></svg>
+                    5. Ожидаемые Результаты
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-6 bg-[--card-dark] border-t-4 border-teal-500 rounded-xl shadow-xl text-center">
+                        <p class="text-5xl font-extrabold text-teal-400">50+</p>
+                        <p class="mt-2 text-slate-300 font-medium">Зарегистрированных участников</p>
+                    </div>
+                    <div class="p-6 bg-[--card-dark] border-t-4 border-amber-500 rounded-xl shadow-xl text-center">
+                        <p class="text-5xl font-extrabold text-amber-400">40+</p>
+                        <p class="mt-2 text-slate-300 font-medium">Выпускников программы</p>
+                    </div>
+                    <div class="p-6 bg-[--card-dark] border-t-4 border-blue-500 rounded-xl shadow-xl text-center">
+                        <p class="text-5xl font-extrabold text-blue-400">5</p>
+                        <p class="mt-2 text-slate-300 font-medium">Лучших инициатив с менторским сопровождением</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-slate-800/50 rounded-xl text-slate-300 border border-slate-700">
+                    <p class="font-semibold mb-2">Дополнительные результаты:</p>
+                    <ul class="list-disc list-outside pl-5 space-y-1 text-slate-400">
+                        <li>5 лучших инициатив, получивших экспертное сопровождение.</li>
+                        <li>Повышение цифровой и коммуникативной грамотности молодежи.</li>
+                        <li>Создание сообщества молодых лидеров.</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 7. РЕСУРСЫ И БЮДЖЕТ (ВИЗУАЛИЗАЦИЯ DONUT CHART) -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-indigo-400"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    7. Ресурсы и Бюджет (2 000 000 руб.)
+                </h3>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 bg-[--card-dark] p-6 rounded-xl shadow-lg border border-slate-700">
+                    <!-- Chart Container (SVG will be injected here) -->
+                    <div id="chart" class="chart-container md:w-1/2 w-full">
+                        <!-- D3 chart goes here -->
+                    </div>
+
+                    <!-- Legend (Detailed breakdown) -->
+                    <div id="legend" class="md:w-1/2 w-full space-y-3 p-2">
+                        <!-- Legend items will be generated by JS -->
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h4 class="text-xl font-bold text-blue-400 mb-3">Софинансирование и преимущества партнерства</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-blue-700">
+                            <p class="font-semibold text-blue-400">Вклад МФТИ (Софинансирование):</p>
+                            <ul class="list-disc list-outside pl-5 text-slate-400 mt-2 space-y-1">
+                                <li>Экспертиза преподавателей.</li>
+                                <li>Использование LMS университета.</li>
+                                <li>Хостинг сайта на собственных серверах.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-teal-700">
+                            <p class="font-semibold text-teal-400">Преимущества партнерства:</p>
+                            <ul class="list-disc list-outside pl-5 text-slate-400 mt-2 space-y-1">
+                                <li>Лучшие эксперты страны в своих областях знаний.</li>
+                                <li>Более 75-летний опыт обучения.</li>
+                                <li>Многолетний опыт в создании эффективных онлайн-программ.</li>
+                                <li>Престиж и репутация бренда МФТИ.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 4. КАЛЕНДАРНЫЙ ПЛАН-ГРАФИК (БЛОЧНЫЙ ДИЗАЙН) -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-orange-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    4. Календарный План-График (Март – Июнь 2026)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    
+                    <!-- Этап 1: Подготовка -->
+                    <div class="md:col-span-1 p-5 rounded-xl shadow-2xl bg-slate-800 border-t-4 border-orange-500 hover:shadow-orange-500/20 transition duration-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                             <svg class="w-5 h-5 text-orange-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <h4 class="text-lg font-bold text-orange-400">Март '26</h4>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-1">Подготовка платформы, отбор участников, запуск промо-кампании.</p>
+                    </div>
+
+                    <!-- Этап 2: Обучение -->
+                    <div class="md:col-span-2 p-5 rounded-xl shadow-2xl bg-slate-800 border-t-4 border-teal-500 hover:shadow-teal-500/20 transition duration-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                             <svg class="w-5 h-5 text-teal-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l10 5.5v11L12 22 2 17.5v-11L12 2z"/><polyline points="2 7 12 12 22 7"/></svg>
+                            <h4 class="text-lg font-bold text-teal-400">Март – Апрель '26</h4>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-1">Проведение **8 онлайн-лекций** и активная наставническая поддержка.</p>
+                    </div>
+
+                    <!-- Этап 3: Презентация -->
+                    <div class="md:col-span-1 p-5 rounded-xl shadow-2xl bg-slate-800 border-t-4 border-lime-500 hover:shadow-lime-500/20 transition duration-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                             <svg class="w-5 h-5 text-lime-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><path d="M9 15h6"/></svg>
+                            <h4 class="text-lg font-bold text-lime-400">Апрель '26</h4>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-1">Презентация участниками проектов (питчинг).</p>
+                    </div>
+
+                    <!-- Этап 4: Менторство -->
+                    <div class="md:col-span-1 p-5 rounded-xl shadow-2xl bg-slate-800 border-t-4 border-indigo-500 hover:shadow-indigo-500/20 transition duration-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <svg class="w-5 h-5 text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <h4 class="text-lg font-bold text-indigo-400">Май '26</h4>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-1">Индивидуальные менторские сессии для 5 лучших решений.</p>
+                    </div>
+                    
+                    <!-- Этап 5: Аналитика -->
+                    <div class="md:col-span-5 p-5 rounded-xl shadow-2xl bg-slate-800 border-t-4 border-sky-500 hover:shadow-sky-500/20 transition duration-300">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <svg class="w-5 h-5 text-sky-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            <h4 class="text-lg font-bold text-sky-400">Июнь '26</h4>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-1">Сбор обратной связи, оценка эффективности (аналитика), подготовка отчета.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. ТЕМЫ ЗАНЯТИЙ (АККОРДЕОН) -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-cyan-400"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><polyline points="8 7 12 7 12 11 8 11"/><line x1="8" y1="15" x2="16" y2="15"/></svg>
+                    3. Образовательный Онлайн-Трек (8 Лекций)
+                </h3>
+                <div id="lecture-accordion" class="space-y-3">
+                    <!-- Lecture Accordions will be generated by JS -->
+                </div>
+            </section>
+
+            <!-- 6. РИСКИ И ПУТИ ИХ МИНИМИЗАЦИИ -->
+            <section>
+                <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-yellow-400"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    6. Риски и Пути их Минимизации
+                </h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-slate-800/50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+                        <p class="font-semibold text-yellow-400">Риск: Недостаточная вовлеченность молодежи.</p>
+                        <p class="text-slate-400 mt-1">Минимизация: Геймификация, активная коммуникация, работа с кураторами.</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+                        <p class="font-semibold text-yellow-400">Риск: Отсутствие опыта проектной деятельности.</p>
+                        <p class="text-slate-400 mt-1">Минимизация: Поддержка наставников, пошаговая методология.</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+                        <p class="font-semibold text-yellow-400">Риск: Технические сложности.</p>
+                        <p class="text-slate-400 mt-1">Минимизация: Использование надежных платформ (ЛМС МФТИ).</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-slate-300">PR-стратегия:</p>
+                    <p class="text-slate-400 mt-1">Запуск промо-кампании планируется в марте 2026 года. Реклама будет проходить через региональных партнеров, социальные сети МФТИ и целевые объявления.</p>
+                </div>
+            </section>
+
+            <!-- 8. СОЦИАЛЬНЫЙ ЭФФЕКТ -->
+            <section class="p-6 bg-[--card-dark] rounded-xl shadow-lg border-l-4 border-blue-500">
+                <h3 class="text-2xl font-bold text-blue-400 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-teal-400"><path d="M12 2a10 10 0 1 0 10 10c0-5.52-4.48-10-10-10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
+                    8. Социальный Эффект
+                </h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Проект позволит молодежи из Тюменской области освоить знания в социально-технологическом предпринимательстве, увидеть возможности самореализации в собственных регионах и стать инициаторами позитивных изменений. Созданные проекты будут направлены на развитие территорий и повышение качества жизни.
+                </p>
+                <p class="mt-4 text-sm text-slate-500 italic">
+                    У нас уже много лет существует центр онлайн-образования, выпустивший успешных IT-предпринимателей. В социальном гранте мы видим возможность подарить людям структурированные знания в партнерстве с вами.
+                </p>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- JAVASCRIPT FOR VISUALIZATIONS (D3.js for Budget and Lecture Accordion) -->
+    <script>
+        // --- 1. D3.js Budget Visualization ---
+        const budgetData = [
+            { label: "Гонорары лекторов", value: 850000, description: "Гонорары лекторов." },
+            { label: "Разработка платформы", value: 400000, description: "Личный кабинет, сопровождение программы." },
+            { label: "Фирстиль и фреймворки", value: 200000, description: "Разработка фирстиля, презентаций." },
+            { label: "Администрирование", value: 250000, description: "Администрирование и координация." },
+            { label: "Менторские сессии", value: 250000, description: "Индивидуальные сессии (5 лучших решений)." },
+            { label: "Оценка и аналитика", value: 50000, description: "Эффективность и отчетность." }
+        ];
+
+        const totalBudget = budgetData.reduce((sum, item) => sum + item.value, 0);
+
+        // Vibrant colors for dark background
+        const color = d3.scaleOrdinal()
+            .domain(budgetData.map(d => d.label))
+            .range(["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#38bdf8"]); 
+
+        const width = 400;
+        const height = 400;
+        const radius = Math.min(width, height) / 2;
+        const innerRadius = radius * 0.6;
+        const outerRadius = radius * 0.9;
+
+        function createChart() {
+            d3.select("#chart svg").remove();
+
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .attr("preserveAspectRatio", "xMidYMid meet")
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+            const pie = d3.pie()
+                .value(d => d.value)
+                .sort(null);
+
+            const arc = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            const arcs = svg.selectAll(".arc")
+                .data(pie(budgetData))
+                .enter()
+                .append("g")
+                .attr("class", "arc");
+
+            arcs.append("path")
+                .attr("d", arc)
+                .attr("fill", d => color(d.data.label))
+                .style("stroke", "#0F172A") // Dark stroke to separate slices cleanly
+                .style("stroke-width", "3px")
+                .on("mouseover", handleMouseOver)
+                .on("mouseout", handleMouseOut)
+                .on("click", handleClick);
+
+            // Center Label - Initial
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("class", "total-label font-extrabold")
+                .style("fill", "#F1F5F9") // Light text
+                .style("font-size", "1.5rem")
+                .style("pointer-events", "none")
+                .text(`${totalBudget.toLocaleString('ru-RU')} ₽`);
+
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("y", 30)
+                .attr("class", "total-sub-label")
+                .style("fill", "#94A3B8") // Gray text
+                .style("font-size", "0.9rem")
+                .style("pointer-events", "none")
+                .text("Общий Бюджет");
+            
+            let currentSelection = null;
+
+            function updateCenterText(d) {
+                if (d) {
+                    d3.select(".total-label").text(d.data.value.toLocaleString('ru-RU') + " ₽");
+                    d3.select(".total-sub-label").text((d.data.value / totalBudget * 100).toFixed(1) + "%");
+                } else {
+                    d3.select(".total-label").text(totalBudget.toLocaleString('ru-RU') + " ₽");
+                    d3.select(".total-sub-label").text("Общий Бюджет");
+                }
+            }
+
+            function updateSliceStyle(d, isSelected) {
+                const slice = d3.select(this);
+                const transform = isSelected ? `translate(${arc.centroid(d).map(x => x * 0.1)})` : "translate(0,0)";
+                const opacity = isSelected ? 0.9 : 1;
+                
+                slice.transition().duration(150).attr("transform", transform).style("opacity", opacity);
+                
+                d3.selectAll(".legend-item").style("background-color", "var(--card-dark)"); // Reset all
+                if (isSelected) {
+                    d3.select(`#legend-item-${d.data.label.replace(/\s/g, '-')}`)
+                      .style("background-color", "#334155"); // Highlight selected
+                }
+            }
+            
+            function handleMouseOver(event, d) {
+                if (currentSelection !== d.data.label) {
+                    updateSliceStyle.call(this, d, true);
+                    updateCenterText(d);
+                }
+            }
+
+            function handleMouseOut(event, d) {
+                if (currentSelection !== d.data.label) {
+                    updateSliceStyle.call(this, d, false);
+                    updateCenterText(null);
+                }
+            }
+            
+            function handleClick(event, d) {
+                const isCurrentlySelected = currentSelection === d.data.label;
+
+                arcs.select("path").each(function(arcData) {
+                    updateSliceStyle.call(this, arcData, false);
+                });
+                updateCenterText(null);
+                currentSelection = null; 
+
+                if (!isCurrentlySelected) {
+                    currentSelection = d.data.label;
+                    updateSliceStyle.call(this, d, true);
+                    updateCenterText(d);
+                }
+            }
+            
+            window.handleLegendClick = function(label) {
+                const d = pie(budgetData).find(p => p.data.label === label);
+                if (d) {
+                    const pathElement = arcs.select("path").filter(function(p) { return p.data.label === label; }).node();
+                    if (pathElement) {
+                        handleClick.call(pathElement, null, d);
+                    }
+                }
+            }
+        }
+
+        function createLegend() {
+            const legendDiv = d3.select("#legend");
+            legendDiv.html('<h4 class="text-lg font-semibold text-slate-300 border-b border-slate-700 pb-2 mb-3">Детализация расходов</h4>');
+            
+            budgetData.forEach(item => {
+                const percentage = (item.value / totalBudget * 100).toFixed(1);
+                const itemDiv = legendDiv.append("div")
+                    .attr("class", "legend-item p-3 rounded-lg border border-slate-700 bg-[--card-dark] flex items-center justify-between transition duration-300 ease-in-out hover:shadow-2xl hover:border-blue-500/50")
+                    .attr("id", `legend-item-${item.label.replace(/\s/g, '-')}`)
+                    .on("click", () => window.handleLegendClick(item.label)); 
+                
+                const leftDiv = itemDiv.append("div").attr("class", "flex items-start gap-3");
+                
+                leftDiv.append("div")
+                    .attr("class", "w-3 h-3 mt-1 rounded-full flex-shrink-0 shadow-md")
+                    .style("background-color", color(item.label));
+
+                const textDiv = leftDiv.append("div");
+                
+                textDiv.append("div")
+                    .attr("class", "font-medium text-slate-200 text-sm leading-tight")
+                    .text(item.label);
+                
+                const rightDiv = itemDiv.append("div").attr("class", "text-right flex-shrink-0");
+
+                rightDiv.append("div")
+                    .attr("class", "font-bold text-slate-100 text-base leading-tight")
+                    .text(`${item.value.toLocaleString('ru-RU')} ₽`);
+
+                rightDiv.append("div")
+                    .attr("class", "text-xs font-semibold text-slate-400 mt-0.5")
+                    .text(`${percentage}%`);
+            });
+        }
+        
+        // --- 2. Lecture Accordion ---
+        const lectureData = [
+            { title: "1. Как технологии помогают решать социальные проблемы", desc: "Обзор российских и мировых кейсов применения IT для социального блага. Изучение потенциала технологий." },
+            { title: "2. От идеи к действию: как родить проект, который действительно нужен людям", desc: "Методологии генерации идей, направленные на решение конкретных проблем. Превращение идеи в четкую концепцию (SMART-цели)." },
+            { title: "3. Как понять, кому ты помогаешь: исследуем аудиторию и боль", desc: "Глубокий анализ целевой аудитории, создание 'портрета' благополучателя и методы исследования (интервью, эмпатические карты)." },
+            { title: "4. Дизайн-мышление в действии", desc: "Поэтапное прохождение процесса дизайн-мышления (эмпатия, фокусировка, прототипирование) для разработки инноваций." },
+            { title: "5. Искусственный интеллект в помощь: инструменты, которые экономят время", desc: "Обзор доступных инструментов ИИ для автоматизации рутинных задач и анализа данных в социальных проектах." },
+            { title: "6. Как зарабатывать на добрых делах: социальное предпринимательство", desc: "Построение устойчивой бизнес-модели для социального проекта, обзор источников финансирования и фандрайзинга." },
+            { title: "7. Командная работа онлайн: как не поссориться и сделать проект до конца", desc: "Эффективные инструменты удаленной работы, управление конфликтами и поддержание мотивации в распределенных командах." },
+            { title: "8. Как презентовать себя и проект: секреты уверенного питча", desc: "Подготовка убедительной презентации (питча) для инвесторов и партнеров. Отработка ораторского мастерства." }
+        ];
+        
+        function createLectureAccordion() {
+            const container = document.getElementById('lecture-accordion');
+            lectureData.forEach((lecture, index) => {
+                const details = document.createElement('details');
+                details.className = 'bg-[--card-dark] border border-slate-700 rounded-lg shadow-lg';
+                
+                const summary = document.createElement('summary');
+                summary.className = 'flex items-center justify-between p-4 cursor-pointer select-none font-medium text-slate-200 hover:bg-slate-700 transition duration-150';
+                summary.innerHTML = `
+                    <span class="flex items-center">
+                        <span class="w-6 h-6 mr-3 bg-blue-500 text-white text-center rounded-full flex items-center justify-center text-xs font-bold">${index + 1}</span>
+                        ${lecture.title.substring(3).trim()}
+                    </span>
+                    <svg class="w-5 h-5 text-blue-400 transform transition-transform duration-300 details-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                `;
+
+                const content = document.createElement('div');
+                content.className = 'p-4 pt-0 text-slate-400 border-t border-slate-700';
+                content.innerHTML = `<p class="mt-2">${lecture.desc}</p>`;
+
+                details.appendChild(summary);
+                details.appendChild(content);
+                container.appendChild(details);
+            });
+        }
+
+        // --- Window Load Initialization ---
+        window.onload = function() {
+            createChart();
+            createLegend();
+            createLectureAccordion();
+        }
+    </script>
+</body>
+</html>
+
+
